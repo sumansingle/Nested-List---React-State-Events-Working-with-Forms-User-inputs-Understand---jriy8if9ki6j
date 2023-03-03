@@ -155,75 +155,85 @@ const states = [
   },
 ];
 
+function Towns(props) {
+  return (
+    <div>
+      <ul>
+        {states[props.ind1].cities[props.ind2].towns.map((item, index) => (
+          <div key={index}>
+            <li id={"town" + (index + 1)}>{item.name}</li>
+          </div>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function Cities(props) {
+  const [town, setTown] = useReducer(
+    (town, index) => {
+      let t = [...town];
+      t[index] = !t[index];
+      return t;
+    },
+    [false, false, false, false, false, false]
+  );
+  return (
+    <div>
+      <ul>
+        {states[props.ind].cities.map((item, index) => (
+          <div key={index}>
+            <li
+              id={"city" + (index + 1)}
+              onClick={() => {
+                setTown(index);
+              }}
+            >
+              {item.name}
+            </li>
+            {town[index] ? <Towns ind1={props.ind} ind2={index} /> : <></>}
+          </div>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function States(props) {
+  const [city, setCity] = useReducer(
+    (city, index) => {
+      let t = [...city];
+      t[index] = !t[index];
+      return t;
+    },
+    [false, false, false, false, false, false]
+  );
+  return (
+    <div>
+      {states.map((item, index) => (
+        <div key={index}>
+          <li
+            id={"state" + (index + 1)}
+            onClick={() => {
+              setCity(index);
+            }}
+          >
+            {item.name}
+          </li>
+          {city[index] ? <Cities ind={index} /> : <></>}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function App() {
-  const [selectedState, setSelectedState] = useState(null);
-  const [selectedCities, setSelectedCities] = useState(null);
-  const [selectedTowns, setSelectedTowns] = useState(null);
-
-  function toggleCities(state) {
-    if (selectedState === state) {
-      setSelectedState(null);
-      setSelectedCities(null);
-      setSelectedTowns(null);
-    } else {
-      setSelectedState(state);
-      setSelectedCities(null);
-      setSelectedTowns(null);
-    }
-  }
-
-  function toggleTowns(cities) {
-    if (selectedCities === cities) {
-      setSelectedCities(null);
-      setSelectedTowns(null);
-    } else {
-      setSelectedCities(cities);
-      setSelectedTowns(null);
-    }
-  }
-
-  function toggleTownsList(towns) {
-    if (selectedTowns === towns) {
-      setSelectedTowns(null);
-    } else {
-      setSelectedTowns(towns);
-    }
-  }
-
   return (
     <div id="main">
-    <h1>States, Cities and Towns</h1>
-    <ul>
-      {states.map((state, index) => (
-        <li key={`state${index}`} onClick={() => toggleCities(state)}>
-          {state.name}
-          {selectedState === state && (
-            <ul>
-              {state.cities.map((cities, index) => (
-                <li key={`cities${index}`} onClick={() => toggleTowns(cities)}>
-                  {cities.name}
-                  {selectedCities === cities && (
-                    <ul>
-                      {cities.towns.map((towns, index) => (
-                        <li key={`town${index}`} onClick={() => toggleTownsList(towns)}>
-                          {towns.name}
-                          {selectedTowns === towns && (
-                            <ul>
-                              <li>{towns.name}</li>
-                            </ul>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
-        </li>
-      ))}
-    </ul>
-  </div>
+      <ul>
+        <States />
+      </ul>
+    </div>
   );
 }
 
